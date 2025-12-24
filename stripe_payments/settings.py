@@ -119,6 +119,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [
+    BASE_DIR / 'static',
+]
 
 # Site URL for Stripe redirects
 SITE_URL = config('SITE_URL', default='http://localhost:8000')

@@ -4,6 +4,11 @@ FROM python:3.12-slim
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
+# Set basic Django settings for build
+ENV SECRET_KEY=build-time-key
+ENV DEBUG=False
+ENV ALLOWED_HOSTS=localhost,127.0.0.1
+
 # Set work directory
 WORKDIR /app
 

@@ -35,4 +35,4 @@ RUN python manage.py migrate
 EXPOSE 8000
 
 # Run the application
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "stripe_payments.wsgi:application"]
+CMD gunicorn stripe_payments.wsgi:application --bind 0.0.0.0:$PORT

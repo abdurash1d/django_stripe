@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Order {{ order.id }}</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <h1>Order {{ order.id }}</h1>
+
+    <h2>Items:</h2>
+    <ul>
+        {% for item in order.items.all %}
+        <li>{{ item.name }} - {{ item.get_price_in_dollars }}</li>
+        {% endfor %}
+    </ul>
+
+    {% if order.discount %}
+    <p><strong>Discount:</strong> {{ order.discount }}</p>
+    {% endif %}
+
+    {% if order.tax %}
+    <p><strong>Tax:</strong> {{ order.tax }}</p>
+    {% endif %}
+
+    <p><strong>Total: {{ order.get_display_total }}</strong></p>
+
+    <button id="buy-button" style="padding: 10px 20px; background-color: #6772e5; color: white; border: none; border-radius: 4px; cursor: pointer;">
+        Buy Order
+    </button>
+
+    <div id="payment-status" style="margin-top: 20px;"></div>
+
+    <script type="text/javascript">
+        var stripe = Stripe('{{ stripe_publishable_key }}');
+        var buyButton = document.getElementById('buy-button');
+        var paymentStatus = document.getElementById('payment-status');
+
+        buyButton.addEventListener('click', function() {
+            buyButton.disabled = true;
+            buyButton.textContent = 'Processing...';
+
+            // Fetch payment session/intent
+            fetch('/buy/order/{{ order.id }}/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                if (data.id) {
+                    // Checkout Session
+                    return stripe.redirectToCheckout({ sessionId: data.id });
+                } else if (data.client_secret) {
+                    // Payment Intent - for simplicity, we'll redirect to a success page
+                    window.location.href = '/success?payment_intent=' + data.client_secret.split('_secret_')[0];
+                }
+            })
+            .then(function(result) {
+                if (result.error) {
+                    paymentStatus.textContent = result.error.message;
+                    buyButton.disabled = false;
+                    buyButton.textContent = 'Buy Order';
+                }
+            })
+            .catch(function(error) {
+                console.error('Error:', error);
+                paymentStatus.textContent = 'An error occurred. Please try again.';
+                buyButton.disabled = false;
+                buyButton.textContent = 'Buy Order';
+            });
+        });
+    </script>
+</body>
+</html>

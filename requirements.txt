@@ -1,0 +1,4 @@
+Django==6.0
+stripe==14.1.0
+python-decouple==3.8
+gunicorn==23.0.0

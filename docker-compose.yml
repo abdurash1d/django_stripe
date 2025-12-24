@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=django-insecure-docker-key-change-in-production
+      - DEBUG=True
+      - ALLOWED_HOSTS=localhost,127.0.0.1,web
+      - SITE_URL=http://localhost:8000
+      - STRIPE_PUBLISHABLE_KEY_USD=pk_test_default_usd
+      - STRIPE_SECRET_KEY_USD=sk_test_default_usd
+      - STRIPE_PUBLISHABLE_KEY_EUR=pk_test_default_eur
+      - STRIPE_SECRET_KEY_EUR=sk_test_default_eur
+      - PAYMENT_METHOD=session
+    volumes:
+      - .:/app
+      - ./db.sqlite3:/app/db.sqlite3

@@ -5,5 +5,20 @@
   },
   "deploy": {
     "startCommand": "gunicorn stripe_payments.wsgi:application --bind 0.0.0.0:$PORT"
+  },
+  "environments": {
+    "production": {
+      "variables": {
+        "SECRET_KEY": "${SECRET_KEY}",
+        "DEBUG": "False",
+        "ALLOWED_HOSTS": "${RAILWAY_STATIC_URL}",
+        "SITE_URL": "${RAILWAY_STATIC_URL}",
+        "STRIPE_PUBLISHABLE_KEY_USD": "${STRIPE_PUBLISHABLE_KEY_USD}",
+        "STRIPE_SECRET_KEY_USD": "${STRIPE_SECRET_KEY_USD}",
+        "STRIPE_PUBLISHABLE_KEY_EUR": "${STRIPE_PUBLISHABLE_KEY_EUR}",
+        "STRIPE_SECRET_KEY_EUR": "${STRIPE_SECRET_KEY_EUR}",
+        "PAYMENT_METHOD": "session"
+      }
+    }
   }
 }
